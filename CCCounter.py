@@ -20,7 +20,7 @@ def worldMeters():
     for d in datas:
         label = d.find_all('td')[0].text
         data = d.find_all('td')[1].text
-        if label == 'South Korea':
+        if label == ' South Korea':
             return int(data)
 
 def namu():
