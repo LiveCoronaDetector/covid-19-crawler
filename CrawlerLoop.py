@@ -5,14 +5,14 @@ import time
 import datetime
 import CCCounter
 
-logFilePath = os.path.dirname(os.path.abspath(__file__)) + "/log.txt"    
+logFilePath = os.path.dirname(os.path.abspath(__file__)) + "/log.txt"
+slackUrlFilePath = os.path.dirname(os.path.abspath(__file__)) + "/slack.txt"
 def needPush(newItem):
     lastItem = 0
 
     try:
         with open(logFilePath, "r") as f:
             lastItem = int(f.readline())
-            f.close()
     except:
         pass
     print("last : ", lastItem, ", new : ", newItem)
@@ -21,10 +21,15 @@ def needPush(newItem):
 def saveData(newItem):
     with open(logFilePath, "w") as f:
         f.write(str(newItem))
-        f.close()
     
 def pushSlack(newItem):
-    pushUrl = "https://hooks.slack.com/services/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"
+    pushUrl = ""
+    try:
+        with open(slackUrlFilePath, "r") as f:
+            pushUrl = f.readline()
+    except:
+        print("Failed to get webhook url.")
+        return
     headers = {'Content-type': 'application/json; charset=utf-8'}
     data = {"text": "국내 확진자 : " + str(newItem)}
     
