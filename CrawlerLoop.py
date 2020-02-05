@@ -24,7 +24,7 @@ def saveData(newItem):
         f.close()
     
 def pushSlack(newItem):
-    pushUrl = "https://hooks.slack.com/services/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"
+    pushUrl = "https://hooks.slack.com/services/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"
     headers = {'Content-type': 'application/json; charset=utf-8'}
     data = {"text": "국내 확진자 : " + str(newItem)}
     
