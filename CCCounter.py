@@ -3,9 +3,9 @@ import re
 from bs4 import BeautifulSoup
 
 def KCDC():
-    response = requests.get('http://www.cdc.go.kr/linkCheck.es?mid=a21111050500').text
+    response = requests.get('http://ncov.mohw.go.kr/').text
     soup = BeautifulSoup(response, 'html.parser')
-    data = soup.select('#content_detail > ul:nth-child(7) > li')
+    data = soup.select('body > div > div.container.main_container > div > div:nth-child(1) > div.co_cur > ul > li:nth-child(1) > a')
     data = str(data)
 
     data = int(re.search(r'\d+', data).group())
@@ -16,11 +16,10 @@ def worldMeters():
     html = requests.get("https://www.worldometers.info/coronavirus/").text
     soup = BeautifulSoup(html, 'html.parser')
     datas = soup.select('#table3 > tbody > tr')
-
     for d in datas:
         label = d.find_all('td')[0].text
         data = d.find_all('td')[1].text
-        if label == ' South Korea':
+        if label == ' South Korea' or label == ' S. Korea ' or label == 'South Korea':
             return int(data)
 
 def namu():
@@ -59,4 +58,4 @@ def main():
 
 
 if __name__ == '__main__':
-    print(main())
+    print(worldMeters())
