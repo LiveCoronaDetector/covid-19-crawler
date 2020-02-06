@@ -5,7 +5,7 @@ import time
 import datetime
 import CCCounter
 
-logFilePath = os.path.dirname(os.path.abspath(__file__)) + "/log.txt"
+logFilePath = os.path.dirname(os.path.abspath(__file__)) + "/lastdata.txt"
 slackUrlFilePath = os.path.dirname(os.path.abspath(__file__)) + "/slack.txt"
 def needPush(newItem):
     lastItem = 0
