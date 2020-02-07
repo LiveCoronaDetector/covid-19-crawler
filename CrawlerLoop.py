@@ -27,6 +27,8 @@ def pushSlack(newItem):
     try:
         with open(slackUrlFilePath, "r") as f:
             pushUrl = f.readline()
+            if pushUrl[len(pushUrl) - 1] == '\n':
+                pushUrl = pushUrl[:len(pushUrl) - 1]
     except:
         print("Failed to get webhook url.")
         return
@@ -35,8 +37,11 @@ def pushSlack(newItem):
     
     try:
         print(data)
-        requests.post(pushUrl, headers=headers, data=json.dumps(data))
-        saveData(newItem)
+        result = requests.post(pushUrl, headers=headers, data=json.dumps(data))
+        if result.status_code == 200:
+            saveData(newItem)
+        else:
+            print("Failed to send data. response code : " + str(result.status_code))
     except:
         print("Failed to send message.")
 
