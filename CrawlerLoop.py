@@ -50,6 +50,7 @@ if __name__ == '__main__':
     while True:
         print(datetime.datetime.now())
         newItem = CCCounter.main()
+        newItem = newItem['confirmed']
         if needPush(newItem):
             pushSlack(newItem)
             
