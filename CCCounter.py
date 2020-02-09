@@ -71,9 +71,9 @@ def main():
         else:
             print('Crawling Failed!', func.__name__)
 
-    data = {"confirmed":data[0], "recovered":data[1], "dead":data[2]}
+    data = {"domesticConfirmed":data[0], "domesticRecovered":data[1], "domesticDead":data[2]}
     print(data)
-    if data["confirmed"] != 0:
+    if data["domesticConfirmed"] != 0:
        return data
 
     print('all attempt to get data failed.')

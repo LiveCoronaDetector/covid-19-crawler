@@ -21,7 +21,7 @@ def needPush(newItem):
     if type(lastItem) != type(newItem):
         return True
         
-    if lastItem["confirmed"] != newItem["confirmed"] or lastItem["recovered"] != newItem["recovered"] or lastItem["dead"] != newItem["dead"]:
+    if lastItem["domesticConfirmed"] != newItem["domesticConfirmed"] or lastItem["domesticRecovered"] != newItem["domesticRecovered"] or lastItem["domesticDead"] != newItem["domesticDead"]:
         return True
     
     return False
@@ -42,7 +42,7 @@ def pushSlack(newItem):
         print("Failed to get webhook url.")
         return
     headers = {'Content-type': 'application/json; charset=utf-8'}
-    sendString = "국내 확진자 : {}, 국내 완치자 : {}, 국내 사망자 : {}".format(newItem["confirmed"], newItem["recovered"], newItem["dead"])
+    sendString = "국내 확진자 : {}, 국내 완치자 : {}, 국내 사망자 : {}\n{}".format(newItem["domesticConfirmed"], newItem["domesticRecovered"], newItem["domesticDead"], newItem)
     data = {"text": sendString}
     
     try:
