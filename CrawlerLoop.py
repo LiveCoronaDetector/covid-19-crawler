@@ -1,3 +1,5 @@
+#-*- coding:utf-8 -*-
+
 import requests
 import os
 import json
@@ -12,15 +14,22 @@ def needPush(newItem):
 
     try:
         with open(logFilePath, "r") as f:
-            lastItem = int(f.readline())
+            lastItem = json.load(f)
     except:
         pass
     print("last : ", lastItem, ", new : ", newItem)
-    return newItem != lastItem
+    if type(lastItem) != type(newItem):
+        return True
+        
+    if lastItem["confirmed"] != newItem["confirmed"] or lastItem["recovered"] != newItem["recovered"] or lastItem["dead"] != newItem["dead"]:
+        return True
+    
+    return False
 
 def saveData(newItem):
     with open(logFilePath, "w") as f:
-        f.write(str(newItem))
+        jsonData = json.dumps(newItem)
+        f.write(jsonData)
     
 def pushSlack(newItem):
     pushUrl = ""
@@ -33,7 +42,8 @@ def pushSlack(newItem):
         print("Failed to get webhook url.")
         return
     headers = {'Content-type': 'application/json; charset=utf-8'}
-    data = {"text": "국내 확진자 : " + str(newItem)}
+    sendString = "국내 확진자 : {}, 국내 완치자 : {}, 국내 사망자 : {}".format(newItem["confirmed"], newItem["recovered"], newItem["dead"])
+    data = {"text": sendString}
     
     try:
         print(data)
@@ -50,7 +60,7 @@ if __name__ == '__main__':
     while True:
         print(datetime.datetime.now())
         newItem = CCCounter.main()
-        newItem = newItem['confirmed']
+
         if needPush(newItem):
             pushSlack(newItem)
             

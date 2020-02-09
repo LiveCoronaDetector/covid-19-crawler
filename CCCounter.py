@@ -1,3 +1,5 @@
+#-*- coding:utf-8 -*-
+
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -56,26 +58,22 @@ def doTry(function, t=3):
         try :
             return function()
         except :
-            print('Crawling Failed! Retry..')
+            print('Retry..')
 
 def main():
     data = [0,0,0]
+    crawlFuncList = [KCDC, worldMeters, namu]
+    for func in crawlFuncList:
+        tmp = doTry(func)
+        for i in range(3):
+            if tmp is not None and tmp[i] is not None and data[i] == 0:
+                data[i] = tmp[i]
+        else:
+            print('Crawling Failed!', func.__name__)
 
-    tmp = doTry(KCDC)
-    for i in range(3):
-        if tmp[i] is not None:
-            data[i]=tmp[i]
-    tmp = doTry(worldMeters)
-    for i in range(3):
-        if tmp[i] is not None and data[i] == 0:
-            data[i] = tmp[i]
-    tmp = doTry(namu)
-    for i in range(3):
-        if tmp[i] is not None and data[i] == 0:
-            data[i] = tmp[i]
-
-    data = {'confirmed':data[0], 'recovered':data[1], 'dead':data[2]}
-    if data['confirmed'] != 0:
+    data = {"confirmed":data[0], "recovered":data[1], "dead":data[2]}
+    print(data)
+    if data["confirmed"] != 0:
        return data
 
     print('all attempt to get data failed.')
