@@ -3,6 +3,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+import json
 
 def worldMeters():
     html = requests.get("https://www.worldometers.info/coronavirus/").text
@@ -295,10 +296,15 @@ def worldMeters():
                 se["확진자수"] = 확진자
                 se["사망자수"] = 사망자
                 se["완치자수"] = 완치자
-        print(marker)
+        return marker
 
 def main():
     datajson = worldMeters()
+    datajson = json.dumps(datajson, indent=4, ensure_ascii=False)
+    # print(datajson)
+    with open('crawlerMarker.js', 'w', encoding='UTF-8-sig') as file:
+        file.write(datajson)
+    
     return datajson
 
 
