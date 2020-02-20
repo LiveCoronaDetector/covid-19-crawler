@@ -68,8 +68,7 @@ def main():
         for i in range(3):
             if tmp is not None and tmp[i] is not None and data[i] < tmp[i]:
                 data[i] = tmp[i]
-            else:
-                print('Crawling Failed!', func.__name__)
+        print('Crawling result', func.__name__, tmp)
 
     data = {"domesticConfirmed":data[0], "domesticRecovered":data[1], "domesticDead":data[2]}
     print(data)
