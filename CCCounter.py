@@ -66,7 +66,7 @@ def main():
     for func in crawlFuncList:
         tmp = doTry(func)
         for i in range(3):
-            if tmp is not None and tmp[i] is not None and data[i] == 0:
+            if tmp is not None and tmp[i] is not None and data[i] < tmp[i]:
                 data[i] = tmp[i]
             else:
                 print('Crawling Failed!', func.__name__)
