@@ -17,7 +17,13 @@ def KCDC():
     data = soup.select(selector)
     data = str(data)
     recoverd = int(re.search(r'\d+', data).group())
-    return cc, recoverd, 0
+    
+    selector='body > div > div.container.main_container > div > div:nth-child(1) > div.co_cur > ul > li:nth-child(3) > a'
+    data = soup.select(selector)
+    data = str(data)
+    dead = int(re.search(r'\d+', data).group())
+    
+    return cc, recoverd, dead
 
 def worldMeters():
     html = requests.get("https://www.worldometers.info/coronavirus/").text
