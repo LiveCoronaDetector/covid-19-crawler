@@ -33,8 +33,9 @@ def worldMeters():
         label = d.find_all('td')[0].text
         cc = d.find_all('td')[1].text
         recovered = d.find_all('td')[5].text
+        dead = d.find_all('td')[3].text
         if label == ' South Korea' or label == ' S. Korea ' or label == 'South Korea':
-            return int(cc), int(recovered), 0
+            return int(cc), int(recovered), int(dead)
 
 def namu():
     html = requests.get('https://namu.wiki/w/%EC%8B%A0%EC%A2%85%20%EC%BD%94%EB%A1%9C%EB%82%98%EB%B0%94%EC%9D%B4%EB%9F%AC%EC%8A%A4%EA%B0%90%EC%97%BC%EC%A6%9D').text
