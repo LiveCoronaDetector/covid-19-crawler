@@ -1,90 +1,115 @@
-#-*- coding:utf-8 -*-
+"""각 사이트의 확진환자수, 격리해제수, 사망자수 크롤링 함수들"""
+# -*- coding:utf-8 -*-
 
-import requests
+
 import re
+import requests
 from bs4 import BeautifulSoup
 
+
 def KCDC():
-    response = requests.get('http://ncov.mohw.go.kr/index_main.jsp').text
-    soup = BeautifulSoup(response, 'html.parser')
+    """질병관리본부에서 확진환자수, 격리해제수, 사망자수 크롤링
 
-    selector='body > div > div.container.main_container > div > div:nth-child(1) > div.co_cur > ul > li:nth-child(1) > a'
-    data = soup.select(selector)
-    data = str(data)
-    cc = int(re.search(r'\d+', data).group())
+    Returns:
+        (int) cc : 확진환자수
+        (int) recoverd : 격리해제수
+        (int) dead : 사망자수
+    """
+    html = requests.get("http://ncov.mohw.go.kr/index_main.jsp").text
+    soup = BeautifulSoup(html, "html.parser")
+    data = soup.select("div.co_cur > ul > li > a.num")
 
-    selector='body > div > div.container.main_container > div > div:nth-child(1) > div.co_cur > ul > li:nth-child(2) > a'
-    data = soup.select(selector)
-    data = str(data)
-    recoverd = int(re.search(r'\d+', data).group())
-    
-    selector='body > div > div.container.main_container > div > div:nth-child(1) > div.co_cur > ul > li:nth-child(3) > a'
-    data = soup.select(selector)
-    data = str(data)
-    dead = int(re.search(r'\d+', data).group())
-    
-    return cc, recoverd, dead
+    regex = re.compile(r"\d+")
+    cc = int(regex.search(data[0].text).group())  # 확진환자수
+    recovered = int(regex.search(data[1].text).group())  # 격리해제수
+    dead = int(regex.search(data[2].text).group())  # 사망자수
 
-def worldMeters():
+    return [cc, recovered, dead]
+
+
+def worldOmeter():
+    """worldOmeter에서 확진환자수, 격리해제수, 사망자수 크롤링
+
+    Returns:
+        (int) cc : 확진환자수
+        (int) recoverd : 격리해제수
+        (int) dead : 사망자수
+    """
     html = requests.get("https://www.worldometers.info/coronavirus/").text
-    soup = BeautifulSoup(html, 'html.parser')
-    datas = soup.select('#table3 > tbody > tr')
-    for d in datas:
-        label = d.find_all('td')[0].text
-        cc = d.find_all('td')[1].text
-        recovered = d.find_all('td')[5].text
-        dead = d.find_all('td')[3].text
-        if label == ' South Korea' or label == ' S. Korea ' or label == 'South Korea':
-            return int(cc), int(recovered), int(dead)
+    soup = BeautifulSoup(html, "html.parser")
+    data = soup.select("#table3 > tbody > tr")
 
-def namu():
-    html = requests.get('https://namu.wiki/w/%EC%8B%A0%EC%A2%85%20%EC%BD%94%EB%A1%9C%EB%82%98%EB%B0%94%EC%9D%B4%EB%9F%AC%EC%8A%A4%EA%B0%90%EC%97%BC%EC%A6%9D').text
-    soup = BeautifulSoup(html, 'html.parser')
-    selector = '#app > div > div:nth-child(2) > article > div:nth-child(5) > div:nth-child(2) > div > div > div:nth-child(18) > div:nth-child(2) > table > tbody > tr'
-    data = soup.select(selector)
-    for row in data:
-        if '대한민국' in str(row):
-            data = row
-            break
-    soup = BeautifulSoup(str(data), 'html.parser')
-    data = soup.select('.wiki-paragraph')
-
-    cc = str(data[1])
-    dead = str(data[2])
-    recovered = str(data[3])
-
-    cc = int(re.search(r'\d+', cc).group())
-    dead = int(re.search(r'\d+', dead).group())
-    recovered = int(re.search(r'\d+', recovered).group())
+    for datum in data:
+        country = datum.find_all("td")[0].text.strip()
+        korea = ["S. Korea", "South Korea"]
+        if country in korea:
+            country_info = datum.find_all('td')
+            cc = int(country_info[1].text)  # 확진환자수
+            dead = int(country_info[3].text)  # 사망자수
+            recovered = int(country_info[5].text)  # 격리해제수
+            return [cc, recovered, dead]
+    return None
 
 
-    return cc, recovered, dead
+def namuWiki():
+    """나무위키에서 확진환자수, 격리해제수, 사망자수 크롤링
 
-def doTry(function, t=3):
-    for i in range(t): #Error Retry
-        try :
-            return function()
-        except :
-            print('Retry..')
+    Returns:
+        (int) cc : 확진환자수
+        (int) recoverd : 격리해제수
+        (int) dead : 사망자수
+    """
+    html = requests.get("https://namu.wiki/w/%EC%8B%A0%EC%A2%85%20%EC%BD%94%EB%A1%9C%EB%82%98%EB%B0%94%EC%9D%B4%EB%9F%AC%EC%8A%A4%EA%B0%90%EC%97%BC%EC%A6%9D").text
+    soup = BeautifulSoup(html, "html.parser")
+    table = soup.find("a", id=r's-3.2').parent.\
+        findNext("div", class_="wiki-heading-content").\
+        find("div", class_="wiki-table-wrap table-center").\
+        find("tbody")
+
+    data = table.find_all("tr")
+    for datum in data:
+        if "대한민국" in str(datum):
+            country_info = datum.find_all("div", class_="wiki-paragraph")
+            regex = re.compile(r"\d+")
+            cc = int(regex.search(country_info[1].text).group())  # 확진환자수
+            dead = int(country_info[2].text)  # 사망자수
+            recovered = int(country_info[3].text)  # 격리해제수
+            return [cc, recovered, dead]
+    return None
+
 
 def main():
-    data = [0,0,0]
-    crawlFuncList = [KCDC, worldMeters, namu]
-    for func in crawlFuncList:
-        tmp = doTry(func)
+    """[KCDC, worldOmeter, namuWiki] 사이트의 확진환자수, 격리해제수, 사망자수 크롤링
+
+    Returns:
+        (dict) 각 사이트에서 취합한 확진환자수, 격리해제수, 사망자수
+    """
+    crawl_func_list = [KCDC, worldOmeter, namuWiki]
+    data = {"domesticConfirmed": 0, "domesticRecovered": 0, "domesticDead": 0}
+
+    base = [0, 0, 0]
+    for func in crawl_func_list:
+
+        # 크롤링이 실패할 경우 재시도
         for i in range(3):
-            if tmp is not None and tmp[i] is not None and data[i] < tmp[i]:
-                data[i] = tmp[i]
-        print('Crawling result', func.__name__, tmp)
+            try:
+                datum = func()
+            except:  # TODO : 구체적인 exception 추가
+                print("Retry..")
 
-    data = {"domesticConfirmed":data[0], "domesticRecovered":data[1], "domesticDead":data[2]}
-    print(data)
-    if data["domesticConfirmed"] != 0:
-       return data
+        print(f"from [{func.__name__}] : {datum}")
+        for i in range(3):
+            if (datum[i] is not None) and (base[i] < datum[i]):
+                base[i] = datum[i]
 
-    print('all attempt to get data failed.')
-    return False
+    data["domesticConfirmed"] = base[0]
+    data["domesticRecovered"] = base[1]
+    data["domesticDead"] = base[2]
+
+    if data["domesticConfirmed"] == 0:
+        return False
+    return data
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(main())
