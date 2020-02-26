@@ -7,6 +7,23 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def postprocess(cc, recovered, dead):
+    """크롤링 한 환자수 후처리
+
+    Args:
+        cc: 확진환자수 크롤링한 결과
+        recovered: 격리해제수 크롤링한 결과
+        dead: 확진환자수 사망자수 결과
+
+    Returns:
+        후처리된 결과
+    """
+    cc = int(cc.replace(',', ''))
+    recovered = int(recovered.replace(',', ''))
+    dead = int(dead.replace(',', ''))
+    return cc, recovered, dead
+
+
 def KCDC():
     """질병관리본부에서 확진환자수, 격리해제수, 사망자수 크롤링
 
@@ -19,11 +36,11 @@ def KCDC():
     soup = BeautifulSoup(html, "html.parser")
     data = soup.select("div.co_cur > ul > li > a.num")
     regex = re.compile(r"\d[,\d]+")
+    cc = regex.search(data[0].text).group()
+    recovered = regex.search(data[1].text).group()
+    dead = regex.search(data[2].text).group()
 
-    cc = int(regex.search(data[0].text).group().replace(',', ''))  # 확진환자수
-    recovered = int(regex.search(data[1].text).group().replace(',', ''))  # 격리해제수
-    dead = int(regex.search(data[2].text).group().replace(',', ''))  # 사망자수
-    
+    cc, recovered, dead = postprocess(cc, recovered, dead)
     return [cc, recovered, dead]
 
 
@@ -44,9 +61,10 @@ def worldOmeter():
         korea = ["S. Korea", "South Korea"]
         if country in korea:
             country_info = datum.find_all('td')
-            cc = int(country_info[1].text.replace(',', ''))  # 확진환자수
-            dead = int(country_info[3].text.replace(',', ''))  # 사망자수
-            recovered = int(country_info[5].text.replace(',', ''))  # 격리해제수
+            cc = country_info[1].text
+            dead = country_info[3].text
+            recovered = country_info[5].text
+            cc, recovered, dead = postprocess(cc, recovered, dead)
             return [cc, recovered, dead]
     return None
 
@@ -70,10 +88,10 @@ def namuWiki():
     for datum in data:
         if "대한민국" in str(datum):
             country_info = datum.find_all("div", class_="wiki-paragraph")
-            regex = re.compile(r"\d+")
-            cc = int(regex.search(country_info[1].text).group().replace(',', ''))  # 확진환자수
-            dead = int(country_info[2].text.replace(',', ''))  # 사망자수
-            recovered = int(country_info[3].text.replace(',', ''))  # 격리해제수
+            cc = country_info[1].text
+            dead = country_info[2].text
+            recovered = country_info[3].text
+            cc, recovered, dead = postprocess(cc, recovered, dead)
             return [cc, recovered, dead]
     return None
 
@@ -88,19 +106,19 @@ def main():
     data = {"domesticConfirmed": 0, "domesticRecovered": 0, "domesticDead": 0}
 
     base = [0, 0, 0]
+    datum = None
     for func in crawl_func_list:
-        datum = None
-        # 크롤링이 실패할 경우 재시도
-        for i in range(3):
+        for i in range(3):  # 크롤링이 실패할 경우 재시도
             try:
                 datum = func()
             except:  # TODO : 구체적인 exception 추가
-                print("Retry..")
+                print("[{}] scraping retry..".format(func.__name__))
 
-        print("from {} : {}".format(func.__name__, datum))
+        print("from [{}] : {}".format(func.__name__, datum))
         for i in range(3):
-            if (datum is not None) and (datum[i] is not None) and (base[i] < datum[i]):
-                base[i] = datum[i]
+            if (datum is not None) and (datum[i] is not None):
+                if base[i] < datum[i]:
+                    base[i] = datum[i]
 
     data["domesticConfirmed"] = base[0]
     data["domesticRecovered"] = base[1]
