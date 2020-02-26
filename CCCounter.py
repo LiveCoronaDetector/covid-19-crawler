@@ -67,7 +67,7 @@ def worldOmeter():
     soup = BeautifulSoup(html, "html.parser")
     data = soup.select("#table3 > tbody > tr")
 
-    worldmarker = load_json("./worldmarker.json")
+    worldmarker = load_json("./worldmarker.js")
 
     # 가지고 있던 데이터인지 확인하기 위해
     cr_cuntries = []
@@ -98,8 +98,6 @@ def worldOmeter():
 
                     if "S. Korea" in wm["Name_cr"]:
                         korea = wm
-
-    save_json(worldmarker, "./worldmarker.json")
     save_json(worldmarker, "./worldmarker.js")
 
     cc = korea["확진자수"]
