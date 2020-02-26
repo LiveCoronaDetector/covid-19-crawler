@@ -97,7 +97,7 @@ def main():
             except:  # TODO : 구체적인 exception 추가
                 print("Retry..")
 
-        print(f"from [{func.__name__}] : {datum}")
+        print("from {} : {}".format(func.__name__, datum))
         for i in range(3):
             if (datum is not None) and (datum[i] is not None) and (base[i] < datum[i]):
                 base[i] = datum[i]
