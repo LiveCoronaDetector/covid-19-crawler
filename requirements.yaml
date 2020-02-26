@@ -2,7 +2,7 @@ name: scrape
 channels:
 - default
 dependencies:
-  - python=3.7
+  - python=3.5
   - pip
   - pip:
     - Beautifulsoup4
