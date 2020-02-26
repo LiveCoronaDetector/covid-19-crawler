@@ -18,12 +18,12 @@ def KCDC():
     html = requests.get("http://ncov.mohw.go.kr/index_main.jsp").text
     soup = BeautifulSoup(html, "html.parser")
     data = soup.select("div.co_cur > ul > li > a.num")
+    regex = re.compile(r"\d[,\d]+")
 
-    regex = re.compile(r"\d+")
-    cc = int(regex.search(data[0].text).group())  # 확진환자수
-    recovered = int(regex.search(data[1].text).group())  # 격리해제수
-    dead = int(regex.search(data[2].text).group())  # 사망자수
-
+    cc = int(regex.search(data[0].text).group().replace(',', ''))  # 확진환자수
+    recovered = int(regex.search(data[1].text).group().replace(',', ''))  # 격리해제수
+    dead = int(regex.search(data[2].text).group().replace(',', ''))  # 사망자수
+    
     return [cc, recovered, dead]
 
 
@@ -44,9 +44,9 @@ def worldOmeter():
         korea = ["S. Korea", "South Korea"]
         if country in korea:
             country_info = datum.find_all('td')
-            cc = int(country_info[1].text)  # 확진환자수
-            dead = int(country_info[3].text)  # 사망자수
-            recovered = int(country_info[5].text)  # 격리해제수
+            cc = int(country_info[1].text.replace(',', ''))  # 확진환자수
+            dead = int(country_info[3].text.replace(',', ''))  # 사망자수
+            recovered = int(country_info[5].text.replace(',', ''))  # 격리해제수
             return [cc, recovered, dead]
     return None
 
@@ -71,9 +71,9 @@ def namuWiki():
         if "대한민국" in str(datum):
             country_info = datum.find_all("div", class_="wiki-paragraph")
             regex = re.compile(r"\d+")
-            cc = int(regex.search(country_info[1].text).group())  # 확진환자수
-            dead = int(country_info[2].text)  # 사망자수
-            recovered = int(country_info[3].text)  # 격리해제수
+            cc = int(regex.search(country_info[1].text).group().replace(',', ''))  # 확진환자수
+            dead = int(country_info[2].text.replace(',', ''))  # 사망자수
+            recovered = int(country_info[3].text.replace(',', ''))  # 격리해제수
             return [cc, recovered, dead]
     return None
 
@@ -89,7 +89,7 @@ def main():
 
     base = [0, 0, 0]
     for func in crawl_func_list:
-
+        datum = None
         # 크롤링이 실패할 경우 재시도
         for i in range(3):
             try:
@@ -99,7 +99,7 @@ def main():
 
         print(f"from [{func.__name__}] : {datum}")
         for i in range(3):
-            if (datum[i] is not None) and (base[i] < datum[i]):
+            if (datum is not None) and (datum[i] is not None) and (base[i] < datum[i]):
                 base[i] = datum[i]
 
     data["domesticConfirmed"] = base[0]
