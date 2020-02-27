@@ -107,12 +107,12 @@ def main():
                     base[i] = datum[i]
 
     # worldmarker 업데이트
-    worldmarker = load_json("./worldmarker.json")
+    worldmarker = load_json("./_worldmarker.json")
     korea = worldmarker["대한민국"]
     korea["확진자수"] = base[0]
     korea["완치자수"] = base[1]
     korea["사망자수"] = base[2]
-    save_json(worldmarker, "./worldmarker.json")
+    save_json(worldmarker, "./_worldmarker.json")
 
     # 데이터 반환
     data = {"domesticConfirmed": 0, "domesticRecovered": 0, "domesticDead": 0}

@@ -16,7 +16,7 @@ def scrape_worldOmeter():
     soup = BeautifulSoup(html, "html.parser")
     data = soup.select("#table3 > tbody > tr")
 
-    worldmarker = load_json("./worldmarker.json")
+    worldmarker = load_json("./_worldmarker.json")
 
     # 가지고 있던 데이터인지 확인하기 위해
     cr_cuntries = []
@@ -48,7 +48,7 @@ def scrape_worldOmeter():
                     wm["사망자수"] = recovered
                     wm["완치자수"] = dead
 
-    save_json(worldmarker, "./worldmarker.json")
+    save_json(worldmarker, "./_worldmarker.json")
 
 
 if __name__ == "__main__":
