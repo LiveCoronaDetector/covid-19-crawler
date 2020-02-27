@@ -1,0 +1,24 @@
+{
+	"seoul": {
+		"checking": 2279,
+		"time": "질병관리본부 '20.02.27.10시 기준",
+		"suspected": 8238,
+		"unmonitor": 1120,
+		"dead": null,
+		"monitoring": 874,
+		"self": 1994,
+		"negative": 5959,
+		"cc": 59
+	},
+	"daegu": {
+		"suspected": null,
+		"unmonitor": 1,
+		"dead": 3,
+		"checking": null,
+		"negative": null,
+		"cc": 1017,
+		"time": "2.27(목), 09:00기준",
+		"self": null,
+		"monitoring": 1013
+	}
+}

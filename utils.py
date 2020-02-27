@@ -28,26 +28,19 @@ def load_json(path):
     return data
 
 
-def postprocess(cc, recovered, dead):
-    """크롤링 한 환자수 후처리
+def postprocess(*args):
+    """수집한 환자수 후처리
 
     Args:
-        cc: 확진환자수 크롤링한 결과
-        recovered: 격리해제수 크롤링한 결과
-        dead: 사망자수 크롤링한 결과
-
+        후처리 할 데이터
     Returns:
         후처리된 결과
     """
-    cc = cc.replace(',', '').strip()
-    recovered = recovered.replace(',', '').strip()
-    dead = dead.replace(',', '').strip()
+    result = []
+    for text in args:
+        text = text.replace(',', '').strip()
+        if text:
+            text = int(text)
+        result.append(text)
 
-    if cc:
-        cc = int(cc)
-    if recovered:
-        recovered = int(recovered)
-    if dead:
-        dead = int(dead)
-
-    return cc, recovered, dead
+    return result
