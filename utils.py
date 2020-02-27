@@ -26,3 +26,28 @@ def load_json(path):
     with open(path, encoding="utf-8-sig") as jf:
         data = json.load(jf)
     return data
+
+
+def postprocess(cc, recovered, dead):
+    """크롤링 한 환자수 후처리
+
+    Args:
+        cc: 확진환자수 크롤링한 결과
+        recovered: 격리해제수 크롤링한 결과
+        dead: 사망자수 크롤링한 결과
+
+    Returns:
+        후처리된 결과
+    """
+    cc = cc.replace(',', '').strip()
+    recovered = recovered.replace(',', '').strip()
+    dead = dead.replace(',', '').strip()
+
+    if cc:
+        cc = int(cc)
+    if recovered:
+        recovered = int(recovered)
+    if dead:
+        dead = int(dead)
+
+    return cc, recovered, dead

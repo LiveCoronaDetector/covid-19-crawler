@@ -10,6 +10,10 @@ conda env create -f requirements.yaml
 <br>
 
 ## TODO
+- [KCDC 국내 시도별 발생동향](http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=13&ncvContSeq=&contSeq=&board_id=&gubun=&fbclid=IwAR3NoNL_j1phitehSggDQedf7S165308xIEeG8ljACy-VRq-T5efcbcTK_s) 수집
+- 데이터 수집 자동화
+    - 슬랙봇 `worldmarker.json` 데이터에서 가져오기
+- 백엔드 연동
 
 <br>
 
@@ -26,3 +30,6 @@ conda env create -f requirements.yaml
 - **2020.02.26**
     - `testjson.py`과 `CCCounter.py` 병합 (세계정보 크롤링)
     - `utils.py` 추가
+- **2020.02.27**
+    - `CCCounter.py`를 `scraper_korea.py`, `scraper_world.py`로 분리
+        - 분리된 함수들은 `worldmarker.json`을 업데이트
