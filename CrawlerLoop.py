@@ -1,14 +1,17 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 import requests
 import os
 import json
 import time
 import datetime
-import CCCounter
+import scraper_korea
+
 
 logFilePath = os.path.dirname(os.path.abspath(__file__)) + "/lastdata.txt"
 slackUrlFilePath = os.path.dirname(os.path.abspath(__file__)) + "/slack.txt"
+
+
 def needPush(newItem):
     lastItem = 0
 
@@ -26,11 +29,13 @@ def needPush(newItem):
     
     return False
 
+
 def saveData(newItem):
     with open(logFilePath, "w") as f:
         jsonData = json.dumps(newItem)
         f.write(jsonData)
-    
+
+
 def pushSlack(newItem):
     pushUrl = ""
     try:
@@ -55,11 +60,12 @@ def pushSlack(newItem):
     except:
         print("Failed to send message.")
 
+
 if __name__ == '__main__':
     sleepInterval = 60 * 30
     while True:
         print(datetime.datetime.now())
-        newItem = CCCounter.main()
+        newItem = scraper_korea.main()
 
         if needPush(newItem):
             pushSlack(newItem)

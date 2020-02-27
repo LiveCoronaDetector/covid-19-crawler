@@ -1,40 +1,17 @@
-"""각 사이트의 확진환자수, 격리해제수, 사망자수 크롤링 함수들"""
-# -*- coding:utf-8 -*-
+"""질병관리본부, worldOmeter, namuWiki에서 국내 확진환자수, 격리해제수, 사망자수 수집
 
+국내 데이터는 제외하고 수집
+"""
+# -*- coding:utf-8 -*-
 
 import re
 import requests
 from bs4 import BeautifulSoup
-from utils import save_json, load_json
+from utils import save_json, load_json, postprocess
 
 
-def postprocess(cc, recovered, dead):
-    """크롤링 한 환자수 후처리
-
-    Args:
-        cc: 확진환자수 크롤링한 결과
-        recovered: 격리해제수 크롤링한 결과
-        dead: 사망자수 크롤링한 결과
-
-    Returns:
-        후처리된 결과
-    """
-    cc = cc.replace(',', '').strip()
-    recovered = recovered.replace(',', '').strip()
-    dead = dead.replace(',', '').strip()
-
-    if cc:
-        cc = int(cc)
-    if recovered:
-        recovered = int(recovered)
-    if dead:
-        dead = int(dead)
-
-    return cc, recovered, dead
-
-
-def KCDC():
-    """질병관리본부에서 국내 확진환자수, 격리해제수, 사망자수 크롤링
+def scrape_KCDC():
+    """질병관리본부에서 국내 확진환자수, 격리해제수, 사망자수 수집
 
     Returns:
         (int) cc: 국내 확진환자수
@@ -53,10 +30,8 @@ def KCDC():
     return [cc, recovered, dead]
 
 
-def worldOmeter():
-    """worldOmeter에서 세계 확진환자수, 격리해제수, 사망자수 크롤링
-
-    크롤링 한 결과를 worldmarker.js애 저장
+def scrape_worldOmeter():
+    """worldOmeter에서 국내 확진환자수, 격리해제수, 사망자수 수집
 
     Returns:
         (int) cc: 국내 확진환자수
@@ -66,47 +41,20 @@ def worldOmeter():
     html = requests.get("https://www.worldometers.info/coronavirus/").text
     soup = BeautifulSoup(html, "html.parser")
     data = soup.select("#table3 > tbody > tr")
-
-    worldmarker = load_json("./worldmarker.js")
-
-    # 가지고 있던 데이터인지 확인하기 위해
-    cr_cuntries = []
-    for wma in worldmarker:
-        cr_cuntries.extend(wma["Name_cr"])
+    korea = ["S. Korea", "South Korea"]
 
     for datum in data:
         country = datum.find_all("td")[0].text.strip()
-        cc = datum.find_all("td")[1].text.strip()
-        dead = datum.find_all("td")[3].text.strip()
-        recovered = datum.find_all("td")[5].text.strip()
-        cc, recovered, dead = postprocess(cc, recovered, dead)
-
-        if country not in cr_cuntries:
-            new = {
-                "Name_cr": [country],
-                "확진자수": cc,
-                "사망자수": dead,
-                "완치자수": recovered
-            }
-            worldmarker.append(new)
-        else:
-            for wm in worldmarker:
-                if country in wm["Name_cr"]:
-                    wm["확진자수"] = cc
-                    wm["사망자수"] = recovered
-                    wm["완치자수"] = dead
-
-                    if "S. Korea" in wm["Name_cr"]:
-                        korea = wm
-    save_json(worldmarker, "./worldmarker.js")
-
-    cc = korea["확진자수"]
-    recovered = korea["사망자수"]
-    dead = korea["완치자수"]
-    return [cc, recovered, dead]
+        if country in korea:
+            cc = datum.find_all("td")[1].text
+            dead = datum.find_all("td")[3].text
+            recovered = datum.find_all("td")[5].text
+            cc, recovered, dead = postprocess(cc, recovered, dead)
+            return [cc, recovered, dead]
+    return None
 
 
-def namuWiki():
+def scrape_namuWiki():
     """나무위키에서 국내 확진환자수, 격리해제수, 사망자수 크롤링
 
     Returns:
@@ -134,13 +82,14 @@ def namuWiki():
 
 
 def main():
-    """[KCDC, worldOmeter, namuWiki] 사이트의 확진환자수, 격리해제수, 사망자수 크롤링
+    """[KCDC, worldOmeter, namuWiki] 사이트에서 국내  확진환자수, 격리해제수, 사망자수 수집
+
+    수집 결과를 worldmarker.json에 저장
 
     Returns:
         (dict) 각 사이트에서 취합한 확진환자수, 격리해제수, 사망자수
     """
-    crawl_func_list = [KCDC, worldOmeter, namuWiki]
-    data = {"domesticConfirmed": 0, "domesticRecovered": 0, "domesticDead": 0}
+    crawl_func_list = [scrape_KCDC, scrape_worldOmeter, scrape_namuWiki]
 
     base = [0, 0, 0]
     datum = None
@@ -157,6 +106,16 @@ def main():
                 if base[i] < datum[i]:
                     base[i] = datum[i]
 
+    # worldmarker 업데이트
+    worldmarker = load_json("./worldmarker.json")
+    korea = worldmarker["대한민국"]
+    korea["확진자수"] = base[0]
+    korea["완치자수"] = base[1]
+    korea["사망자수"] = base[2]
+    save_json(worldmarker, "./worldmarker.json")
+
+    # 데이터 반환
+    data = {"domesticConfirmed": 0, "domesticRecovered": 0, "domesticDead": 0}
     data["domesticConfirmed"] = base[0]
     data["domesticRecovered"] = base[1]
     data["domesticDead"] = base[2]
