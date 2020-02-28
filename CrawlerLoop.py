@@ -67,7 +67,7 @@ def pushSlack(newItem):
 
 
 if __name__ == '__main__':
-    sleepInterval = 60 * 30
+    sleepInterval = 60 * 15
     while True:
         print(datetime.datetime.now())
         newItem = scraper_korea.main()
