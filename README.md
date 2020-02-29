@@ -1,6 +1,24 @@
 # Confirmed Case Counter
 [코로나맵](http://livecorona.co.kr/) 사이트에 빠르게 확진자 수를 반영하기 위해, [KCDC](http://ncov.mohw.go.kr/index_main.jsp), [worldometer](https://www.worldometers.info/coronavirus/), [나무위키](https://namu.wiki/w/%EC%8B%A0%EC%A2%85%20%EC%BD%94%EB%A1%9C%EB%82%98%EB%B0%94%EC%9D%B4%EB%9F%AC%EC%8A%A4%EA%B0%90%EC%97%BC%EC%A6%9D)의 데이터를 가져옵니다.
 
+## 크롤링 중인 사이트와 데이터
+### 질병관리본부 : 
+* http://ncov.mohw.go.kr/index_main.jsp
+* 국내 : 확진자수, 격리해제수, 사망자수
+### worldometer
+* https://www.worldometers.info/coronavirus/
+* 국내 : 확진자수, 격리해제수, 사망자수
+### 나무위키
+* https://namu.wiki/w/%EC%8B%A0%EC%A2%85%20%EC%BD%94%EB%A1%9C%EB%82%98%EB%B0%94%EC%9D%B4%EB%9F%AC%EC%8A%A4%EA%B0%90%EC%97%BC%EC%A6%9D
+* 국내 : 확진자수, 격리해제수, 사망자수
+### 서울 발생 동향 수집
+* http://www.seoul.go.kr/coronaV/coronaStatus.do
+* 서울 : 확진자, 의사환자, 검사중, 결과음성, 자가격리자, 감시중, 감시해제
+### 대구 발생 동향 수집
+* http://www.daegu.go.kr/
+* 대구 : 확진자, 격리해제, 격리중, 사망
+
+
 <br>
 
 ## requirements
