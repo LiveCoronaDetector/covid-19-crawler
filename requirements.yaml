@@ -7,3 +7,4 @@ dependencies:
   - pip:
     - Beautifulsoup4
     - requests
+    - lxml

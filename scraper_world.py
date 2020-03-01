@@ -1,54 +1,52 @@
-"""질병관리본부, worldOmeter, namuWiki에서 세계 확진환자수, 격리해제수, 사망자수 수집"""
 # -*- coding:utf-8 -*-
+"""worldOmeter에서 세계 확진환자수, 격리해제수, 사망자수 수집"""
 
 
+import time
 import requests
 from bs4 import BeautifulSoup
-from utils import postprocess, save_json, load_json
+from utils import postprocess, load_json, push_scrape
 
 
 def scrape_worldOmeter():
-    """worldOmeter에서 세계 확진환자수, 격리해제수, 사망자수 크롤링
+    """worldOmeter에서 세계 확진환자수, 격리해제수, 사망자수 크롤링"""
+    html = requests.get("https://www.worldometers.info/coronavirus/")
+    soup = BeautifulSoup(html.text, "html.parser")
+    data = soup.select("#main_table_countries > tbody > tr")
+    world = load_json("./_world.json")
 
-    크롤링 한 결과를 worldmarker.json애 저장
-    """
-    html = requests.get("https://www.worldometers.info/coronavirus/").text
-    soup = BeautifulSoup(html, "html.parser")
-    data = soup.select("#table3 > tbody > tr")
-
-    worldmarker = load_json("./_worldmarker.json")
-
-    # 가지고 있던 데이터인지 확인하기 위해
-    cr_cuntries = []
-    for wma in worldmarker.values():
-        cr_cuntries.extend(wma["Name_cr"])
-
-    korea = ["S. Korea"]
+    push = []
+    sum_cc, sum_dead, sum_recovered = 0, 0, 0
     for datum in data:
         country = datum.find_all("td")[0].text.strip()
-        if country in korea:
-            continue
         cc = datum.find_all("td")[1].text.strip()
         dead = datum.find_all("td")[3].text.strip()
         recovered = datum.find_all("td")[5].text.strip()
-        cc, recovered, dead = postprocess(cc, recovered, dead)
+        postproc = postprocess([cc, recovered, dead])
+        cc, recovered, dead = postproc[0], postproc[1], postproc[2]
 
-        if country not in cr_cuntries:  # 데이터가 없는 경우
-            new = {
-                "Name_cr": [country],
-                "확진자수": cc,
-                "사망자수": dead,
-                "완치자수": recovered
-            }
-            worldmarker[country] = new
+        if cc:
+            sum_cc += cc
+        if dead:
+            sum_dead += dead
+        if recovered:
+            sum_recovered += recovered
+
+        if country not in world.keys():  # 데이터가 없는 경우
+            new = {"cc": cc, "dead": dead, "recovered": recovered}
+            world[country] = new
         else:
-            for wm in worldmarker.values():
-                if country in wm["Name_cr"]:
-                    wm["확진자수"] = cc
-                    wm["사망자수"] = recovered
-                    wm["완치자수"] = dead
+            world[country]["cc"] = cc
+            world[country]["recovered"] = recovered
+            world[country]["dead"] = dead
+        push.append((country, world[country]))
+        time.sleep(0.2)
 
-    save_json(worldmarker, "./_worldmarker.json")
+    push_scrape("scrape_world.py >> scrape_worldOmeter()", push)
+    world["world"] = {}
+    world["world"]["cc"] = sum_cc
+    world["world"]["dead"] = sum_dead
+    world["world"]["recovered"] = sum_recovered
 
 
 if __name__ == "__main__":

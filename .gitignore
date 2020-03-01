@@ -1,4 +1,3 @@
-log.txt
-slack.txt
-_domestic.json
-_worldmarker.json
+__pycache__
+*.txt
+*.json
