@@ -20,10 +20,10 @@
 | Path | Description
 | :--- | :----------
 | [CoronaCrawler](https://github.com/LiveCoronaDetector/CoronaCrawler) | Main folder
-|&boxvr;&nbsp; [scraper_domestic.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scraper_domestic.py) | 질병관리본부, 각 시도에서 운영하는 사이트에서 시도별 발생 동향 수집
-|&boxvr;&nbsp; [scraper_korea.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scraper_korea.py) | 질병관리본부, worldOmeter, namuWiki에서 **국내** 확진환자수, 격리해제수, 사망자수 수집
-|&boxvr;&nbsp; [scraper_world.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scraper_korea.py) | worldOmeter에서 **세계** 확진환자수, 격리해제수, 사망자수 수집 (대한민국 포함)
-|&boxvr;&nbsp; [update_data.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/update_data.py) | 한국과 국내 각 시도별 환자 수가 바뀔 때 슬랙에 알림
+|&boxvr;&nbsp; [scrape_domestic.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_domestic.py) | KCDC와 각 시도에서 운영하는 사이트에서 시도별 발생 동향 수집
+|&boxvr;&nbsp; [scrape_korea.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_korea.py) | 질병관리본부, worldOmeter에서 **국내(+세계)** 확진환자수, 격리해제수, 사망자수 수집
+|&boxvr;&nbsp; [scrape_helper.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_helper.py) | 데이터 수집을 돕는 함수들
+|&boxvr;&nbsp; [update_data.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/update_data.py) | 한국과 국내 각 시도별 환자 수가 바뀔 때 데이터 업데이트
 |&boxvr;&nbsp; [utils.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/utils.py) | 자주 사용하는 공용 함수
 |&boxvr;&nbsp; [_domestic.json](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/_domestic.json) | 국내 시도별 환자수 데이터
 |&boxvr;&nbsp; [_world.json](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/_domestic.json) | 세계 국가별 환자수 데이터
@@ -39,6 +39,6 @@ conda env create -f requirements.yaml
 <br>
 
 ## TODO
-* [ ] [크롤러 모니터링 고도화](https://github.com/LiveCoronaDetector/CoronaCrawler/issues/9)
+* [x] [크롤러 모니터링 고도화](https://github.com/LiveCoronaDetector/CoronaCrawler/issues/9)
 * [ ] [페이지 정보 갱신 자동화](https://github.com/LiveCoronaDetector/CoronaCrawler/issues/8)
 * [ ] `scraper_domestic.py`의 각 시도별 사이트 함수 완성

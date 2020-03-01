@@ -4,16 +4,17 @@
 
 import time
 import datetime
-from utils import load_json, save_json, push_update
-import scraper_korea
-import scraper_domestic
+from utils import load_json, save_json
+from scrape_helper import push_update
+import scrape_korea
+import scrape_domestic
 
 
 world_path = "./_world.json"
 domestic_path = "./_domestic.json"
 
 
-def check_world(old, new):
+def check_korea(old, new):
     """대한민국 데이터가 변했는지 체크
 
     데이터: 확진환자, 완치, 사망
@@ -55,7 +56,7 @@ def check_domestic(old, new):
     return False, None
 
 
-def main():
+def run_main():
     """전체 프로세스 실행"""
     sleep_interval = 60 * 15
 
@@ -66,22 +67,22 @@ def main():
         print("================= 대한민국 업데이트중")
         old_world = load_json(world_path)
         old_korea = old_world["S. Korea"]
-        new_korea = scraper_korea.main()
-        if check_world(old_korea, new_korea):
-            push.append(["대한민국", old_korea.copy(), new_korea.copy()])
+        new_korea = scrape_korea.run_korea()
+        if check_korea(old_korea, new_korea):
+            push.append(["대한민국", old_korea.copy(), new_korea])
             old_korea.update(new_korea)
             save_json(old_world, world_path)
         print("================= 대한민국 업데이트 완료\n")
 
         print("================= 국내 업데이트중")
         old_domestic = load_json(domestic_path)
-        new_domestic = scraper_domestic.main()
+        new_domestic = scrape_domestic.run_domestic()
         check, up_list = check_domestic(old_domestic, new_domestic)
         if check:
             for ul in up_list:
                 key = list(ul.keys())[0]
-                push.append([key, old_domestic[key].copy(), ul[key].copy()])
-                old_domestic[key] = ul[key]
+                push.append([key, old_domestic[key].copy(), ul[key]])
+                old_domestic[key].update(ul[key])
             save_json(old_domestic, domestic_path)
         print("================= 국내 업데이트 완료\n")
         if push:
@@ -90,4 +91,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    run_main()
