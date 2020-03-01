@@ -26,7 +26,7 @@ def check_world(old, new):
         새로 업데이트 해야하는 경우, False
         새로 업데이트 하지 않아도 되는 경우, True
     """
-    if old == new:
+    if new is None or old == new:
         return False
     return True
 
