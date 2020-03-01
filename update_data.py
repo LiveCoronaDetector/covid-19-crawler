@@ -84,7 +84,8 @@ def main():
                 old_domestic[key] = ul[key]
             save_json(old_domestic, domestic_path)
         print("================= 국내 업데이트 완료\n")
-        push_update(push)
+        if push:
+            push_update(push)
         time.sleep(sleep_interval)
 
 
