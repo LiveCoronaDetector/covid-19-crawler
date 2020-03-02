@@ -23,7 +23,7 @@
 |&boxvr;&nbsp; [scrape_domestic.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_domestic.py) | KCDC와 각 시도에서 운영하는 사이트에서 **시도**별 발생 동향 수집
 |&boxvr;&nbsp; [scrape_korea.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_korea.py) | 질병관리본부, worldOmeter에서 **국내(+세계)** 확진환자수, 격리해제수, 사망자수 수집
 |&boxvr;&nbsp; [scrape_helper.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_helper.py) | 데이터 수집을 돕는 함수들
-|&boxvr;&nbsp; [main.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/update_data.py) | 크롤러 실행
+|&boxvr;&nbsp; [main.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/main.py) | 크롤러 실행
 |&boxvr;&nbsp; [utils.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/utils.py) | 자주 사용하는 공용 함수
 |&boxvr;&nbsp; [_domestic.json](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/_domestic.json) | 국내 시도별 환자수 데이터
 |&boxvr;&nbsp; [_world.json](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/_domestic.json) | 세계 국가별 환자수 데이터
