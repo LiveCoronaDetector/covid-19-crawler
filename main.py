@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
-"""한국과 국내 각 시도별 환자 수가 바뀔 때 슬랙에 알림"""
+"""한국과 국내 각 시도별 크롤러 실행"""
 
 
 import time
 import datetime
 from utils import load_json, save_json
-from scrape_helper import push_update
+from scrape_helper import push_update_msg, push_file_msg
 import scrape_korea
 import scrape_domestic
 
@@ -24,8 +24,8 @@ def check_korea(old, new):
         new: scraper_korea.py의 main() 함수 반환값 (새로 수집한 데이터)
 
     Returns:
-        새로 업데이트 해야하는 경우, False
-        새로 업데이트 하지 않아도 되는 경우, True
+        새로 업데이트 해야하는 경우: True
+        새로 업데이트 하지 않아도 되는 경우: False
     """
     if new is None or old == new:
         return False
@@ -72,6 +72,7 @@ def run_main():
             push.append(["대한민국", old_korea.copy(), new_korea])
             old_korea.update(new_korea)
             save_json(old_world, world_path)
+            push_file_msg("./_world.json")
         print("================= 대한민국 업데이트 완료\n")
 
         print("================= 국내 업데이트중")
@@ -84,9 +85,10 @@ def run_main():
                 push.append([key, old_domestic[key].copy(), ul[key]])
                 old_domestic[key].update(ul[key])
             save_json(old_domestic, domestic_path)
+            push_file_msg("./_domestic.json")
         print("================= 국내 업데이트 완료\n")
         if push:
-            push_update(push)
+            push_update_msg(push)
         time.sleep(sleep_interval)
 
 

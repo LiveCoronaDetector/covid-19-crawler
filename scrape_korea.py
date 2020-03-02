@@ -6,7 +6,7 @@ import time
 import requests
 from bs4 import BeautifulSoup
 from utils import postprocess, save_json
-from scrape_helper import push_scrape
+from scrape_helper import push_scraping_msg
 
 
 patients = {"cc": None, "recovered": None, "dead": None}
@@ -76,7 +76,7 @@ def scrape_worldOmeter(korea=True):
             korea_patients["recovered"] = recovered
             korea_patients["dead"] = dead
             push.append(("S. Korea", korea_patients))
-            push_scrape("scrape_korea.py >> scrape_worldOmeter()", push)
+            push_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
             return korea_patients
 
         world_data[country] = patients.copy()
@@ -86,7 +86,7 @@ def scrape_worldOmeter(korea=True):
         push.append((country, world_data[country]))
         time.sleep(0.2)
 
-    push_scrape("scrape_korea.py >> scrape_worldOmeter()", push)
+    push_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
     save_json(world_data, "./_world.json")
     return world_data["S. Korea"]
 
@@ -108,8 +108,8 @@ def scrape_KCDC_korea():
     return_data = {"cc": postproc[0],
                    "recovered": postproc[1],
                    "dead": postproc[2]}
-    push_scrape("scrape_korea.py >> scrape_KCDC_korea()",
-                [("대한민국", return_data)])
+    push_scraping_msg("scrape_korea.py >> scrape_KCDC_korea()",
+                      [("대한민국", return_data)])
     return return_data
 
 
@@ -133,6 +133,7 @@ def run_korea():
             else:
                 print("func [{}]: {}".format(func.__name__, datum))
                 break
+            time.sleep(1)
 
         for key in base.keys():
             if (datum is not None) and (datum[key] is not None):

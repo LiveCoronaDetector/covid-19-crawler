@@ -2,9 +2,10 @@ name: scrape
 channels:
 - default
 dependencies:
-  - python=3.5
+  - python=3.6
   - pip
   - pip:
     - Beautifulsoup4
     - requests
     - lxml
+    - slackclient

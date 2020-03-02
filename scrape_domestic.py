@@ -5,7 +5,7 @@
 import requests
 from bs4 import BeautifulSoup
 from utils import postprocess
-from scrape_helper import push_scrape, check_update
+from scrape_helper import push_scraping_msg, check_update
 
 
 citydo = {"increasing": None,  # 확진환자 증가
@@ -51,7 +51,7 @@ def scrape_KCDC_citydo():
         new_data[name]["total"] = postproc[8]
         new_data[name]["time"] = time
         push.append((name, new_data[name]))
-    push_scrape("scrape_domestic.py >> scrape_KCDC_citydo()", push)
+    push_scraping_msg("scrape_domestic.py >> scrape_KCDC_citydo()", push)
     return new_data
 
 
@@ -75,7 +75,7 @@ def scrape_seoul():
     # seoul["ch_negative"] =
     # seoul["total"] =
     seoul["time"] = time
-    push_scrape("scrape_domestic.py >> scrape_seoul()", [("서울", seoul)])
+    push_scraping_msg("scrape_domestic.py >> scrape_seoul()", [("서울", seoul)])
     return seoul
 
 
