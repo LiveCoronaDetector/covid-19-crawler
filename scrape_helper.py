@@ -81,7 +81,7 @@ def push_update_msg(push_list):
     content = ""
     for pl in push_list:
         content += "<{}>".format(pl[0])
-        diffkeys = [k for k in pl[1] if pl[1][k] != pl[2][k]]
+        diffkeys = [k for k in pl[1] if k in pl[2] and pl[1][k] != pl[2][k]]
         for k in diffkeys:
             content += "\n {}: {} --> {}".format(k, pl[1][k], pl[2][k])
         content += "\n\n"

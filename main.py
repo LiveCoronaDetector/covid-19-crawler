@@ -70,8 +70,8 @@ def run_main():
         new_korea = scrape_korea.run_korea()
         if check_korea(old_korea, new_korea):
             push.append(["대한민국", old_korea.copy(), new_korea])
-            old_korea.update(new_korea)
-            save_json(old_world, world_path)
+            #old_korea.update(new_korea)
+            #save_json(old_world, world_path)
             push_file_msg("./_world.json")
         print("================= 대한민국 업데이트 완료\n")
 
@@ -83,8 +83,8 @@ def run_main():
             for ul in up_list:
                 key = list(ul.keys())[0]
                 push.append([key, old_domestic[key].copy(), ul[key]])
-                old_domestic[key].update(ul[key])
-            save_json(old_domestic, domestic_path)
+                #old_domestic[key].update(ul[key])
+            save_json(new_domestic, domestic_path)
             push_file_msg("./_domestic.json")
         print("================= 국내 업데이트 완료\n")
         if push:

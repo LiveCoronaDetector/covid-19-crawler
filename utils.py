@@ -41,7 +41,11 @@ def postprocess(var_list):
     result = []
     for var in var_list:
         var = var.replace(',', '').strip()
-        if var:
+        if '.' in var:
+            var = float(var)
+        elif var == '-':
+            var = 0
+        elif var:
             var = int(var)
         else:
             var = None

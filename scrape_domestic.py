@@ -10,13 +10,14 @@ from scrape_helper import push_scraping_msg, check_update
 
 citydo = {"increasing": None,  # 확진환자 증가
           "cc_sum": None,  # 확진환자 합계
-          "isolating": None,  # 확진환자 중 격리중
-          "recovered": None,  # 확진환자 중 격리해제
+          #"isolating": None,  # 확진환자 중 격리중
+          #"recovered": None,  # 확진환자 중 격리해제
           "dead": None,  # 확진환자 중 사망
-          "ch_sum": None,  # 검사현황 합계
-          "ch_examined": None,  # 검사현황 검사중
-          "ch_negative": None,  # 검사현황 중 결과음성
-          "total": None,  # 총계
+          #"ch_sum": None,  # 검사현황 합계
+          #"ch_examined": None,  # 검사현황 검사중
+          #"ch_negative": None,  # 검사현황 중 결과음성
+          #"total": None,  # 총계
+          "confirm_rate": None,  # 발생률(인구 10만명당)
           "time": None
           }
 
@@ -50,20 +51,17 @@ def scrape_KCDC_citydo():
         number = datum.find_all("td")
 
         var_list = []
-        for i in range(9):
+        
+        for i in range(4):
             var_list.append(number[i].text)
         postproc = postprocess(var_list)
 
         new_data[name] = citydo.copy()
         new_data[name]["increasing"] = postproc[0]
         new_data[name]["cc_sum"] = postproc[1]
-        new_data[name]["isolating"] = postproc[2]
-        new_data[name]["recovered"] = postproc[3]
-        new_data[name]["dead"] = postproc[4]
-        new_data[name]["ch_sum"] = postproc[5]
-        new_data[name]["ch_examined"] = postproc[6]
-        new_data[name]["ch_negative"] = postproc[7]
-        new_data[name]["total"] = postproc[8]
+        new_data[name]["dead"] = postproc[2]
+        new_data[name]["confirm_rate"] = postproc[3]
+
         new_data[name]["time"] = time
         push.append((name, new_data[name]))
     push_scraping_msg("scrape_domestic.py >> scrape_KCDC_citydo()", push)
