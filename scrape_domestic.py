@@ -23,7 +23,22 @@ citydo = {"increasing": None,  # 확진환자 증가
 
 def scrape_KCDC_citydo():
     """질병관리본부의 시도별 발생동향 수집"""
-    html = requests.get("http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=13&ncvContSeq=&contSeq=&board_id=&gubun=&fbclid=IwAR3NoNL_j1phitehSggDQedf7S165308xIEeG8ljACy-VRq-T5efcbcTK_s")
+    request_headers = {
+                'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'Accept-Encoding' : 'gzip, deflate',
+                'Accept-Language' : 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Cache-Control' : 'max-age=0',
+                'Connection' : 'keep-alive',
+                'Cookie' : '_ga=GA1.3.902460717.1582188059; _gid=GA1.3.1299466237.1583138633; JSESSIONID=hUEn1QgHlDMNI2gSSZJxuN0zYGahJogaUyaeAEvgyXstvqyq4C13pOf4dNGoOdid.mohwwas1_servlet_engine40; NetFunnel_ID=; _gat_gtag_UA_26269343_2=1',
+                'Host' : 'ncov.mohw.go.kr',
+                'Referer' : 'http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=13&ncvContSeq=&contSeq=&board_id=&gubun=&fbclid=IwAR3NoNL_j1phitehSggDQedf7S165308xIEeG8ljACy-VRq-T5efcbcTK_s',
+                'Upgrade-Insecure-Requests': '1',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36',
+                }
+
+    session = requests.Session()
+    session.max_redirects = 6000000
+    html = session.get("http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=13&ncvContSeq=&contSeq=&board_id=&gubun=", headers = request_headers)
     soup = BeautifulSoup(html.text, "html.parser")
     time = soup.select_one("p.info > span").text
     data = soup.select("table.num > tbody > tr")
