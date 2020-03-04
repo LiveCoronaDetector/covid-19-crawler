@@ -83,8 +83,8 @@ def run_main():
             for ul in up_list:
                 key = list(ul.keys())[0]
                 push.append([key, old_domestic[key].copy(), ul[key]])
-                #old_domestic[key].update(ul[key])
-            save_json(new_domestic, domestic_path)
+                old_domestic[key].update(ul[key])
+            save_json(old_domestic, domestic_path)
             push_file_msg("./_domestic.json")
         print("================= 국내 업데이트 완료\n")
         if push:
