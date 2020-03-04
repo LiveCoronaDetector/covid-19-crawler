@@ -6,6 +6,7 @@ import re
 import json
 import requests
 from slack import WebClient
+from utils import load_json
 
 
 def check_update(old_time, new_time):
@@ -78,12 +79,14 @@ def push_update_msg(push_list):
     with open(webhook_url_path, "r") as f:
         webhook_url = f.readline()
 
+    data_desc = load_json("./_data_desc.json")
     content = ""
     for pl in push_list:
         content += "<{}>".format(pl[0])
         diffkeys = [k for k in pl[1] if k in pl[2] and pl[1][k] != pl[2][k]]
         for k in diffkeys:
-            content += "\n {}: {} --> {}".format(k, pl[1][k], pl[2][k])
+            content += "\n{}({}): {} --> {}"\
+                .format(data_desc[k], k, pl[1][k], pl[2][k])
         content += "\n\n"
 
     print(content)

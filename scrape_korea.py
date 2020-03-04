@@ -5,11 +5,11 @@ import re
 import time
 import requests
 from bs4 import BeautifulSoup
-from utils import postprocess, save_json
+from utils import postprocess, load_json, save_json
 from scrape_helper import push_scraping_msg
 
 
-patients = {"cc": None, "recovered": None, "dead": None}
+patients = load_json("./_data.json")
 
 
 # def scrape_namuWiki():
@@ -52,7 +52,7 @@ def scrape_worldOmeter(korea=True):
                세계 데이터를 수집하려면, False
 
     Returns:
-        (dict) 한국의 확진환자수(cc), 격리해제수(recovered), 사망자수(dead)
+        (dict) 한국의 확진환자수(cc_sum), 격리해제수(recovered), 사망자수(dead)
     """
     html = requests.get("https://www.worldometers.info/coronavirus/")
     soup = BeautifulSoup(html.text, "html.parser")
@@ -72,15 +72,15 @@ def scrape_worldOmeter(korea=True):
             if country != "S. Korea":
                 continue
             korea_patients = patients.copy()
-            korea_patients["cc"] = cc
+            korea_patients["cc_sum"] = cc
             korea_patients["recovered"] = recovered
             korea_patients["dead"] = dead
-            push.append(("S. Korea", korea_patients))
+            push.append(("대한민국", korea_patients))
             push_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
             return korea_patients
 
         world_data[country] = patients.copy()
-        world_data[country]["cc"] = cc
+        world_data[country]["cc_sum"] = cc
         world_data[country]["recovered"] = recovered
         world_data[country]["dead"] = dead
         push.append((country, world_data[country]))
@@ -105,9 +105,10 @@ def scrape_KCDC_korea():
     recovered = regex.search(data[1].text).group()
     dead = regex.search(data[2].text).group()
     postproc = postprocess([cc, recovered, dead])
-    return_data = {"cc": postproc[0],
-                   "recovered": postproc[1],
-                   "dead": postproc[2]}
+    return_data = patients.copy()
+    return_data["cc_sum"] = postproc[0]
+    return_data["recovered"] = postproc[1]
+    return_data["dead"] = postproc[2]
     push_scraping_msg("scrape_korea.py >> scrape_KCDC_korea()",
                       [("대한민국", return_data)])
     return return_data
@@ -121,7 +122,9 @@ def run_korea():
         (dict) 각 사이트에서 취합한 대한민국 확진환자수, 격리해제수, 사망자수
     """
     func_list = [scrape_KCDC_korea, scrape_worldOmeter]
-    base = {"cc": 0, "recovered": 0, "dead": 0}
+    base = patients.copy()
+    base["cc_sum"], base["recovered"], base["dead"] = 0, 0, 0
+
     for func in func_list:
         datum = None
         for _ in range(3):

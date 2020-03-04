@@ -34,9 +34,9 @@ def postprocess(var_list):
     """수집한 환자수 후처리
 
     Args:
-        후처리 할 데이터
+        var_list: 후처리 할 문자열 list
     Returns:
-        후처리된 결과
+        (list) var_list 순서대로 후처리된 결과
     """
     result = []
     for var in var_list:

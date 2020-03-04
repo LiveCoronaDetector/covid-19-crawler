@@ -61,34 +61,38 @@ def run_main():
     sleep_interval = 60 * 15
 
     while True:
-        print(datetime.datetime.now())
+        print("\n##########################################################\n")
+        print(datetime.datetime.now(), end="\n")
 
         push = []
-        print("================= 국가별 업데이트중")
-        old_world = load_json(world_path)
-        old_korea = old_world["S. Korea"]
-        new_korea = scrape_korea.run_korea()
-        if check_korea(old_korea, new_korea):
-            push.append(["대한민국", old_korea.copy(), new_korea])
-            old_korea.update(new_korea)
-            save_json(old_world, world_path)
-            push_file_msg("./_world.json")
-        print("================= 국가별 업데이트 완료\n")
-
-        print("================= 국내 지역별 업데이트중")
         old_domestic = load_json(domestic_path)
+        old_korea = old_domestic["대한민국"]
+        old_korea["time"] = None
+
+        print("\n================= <대한민국> 업데이트 중")
+        new_korea = scrape_korea.run_korea()
+        ko_check = check_korea(old_korea, new_korea)
+        if ko_check:
+            push.append(["대한민국", old_korea.copy(), new_korea])
+            old_domestic["대한민국"].update(new_korea)
+
+        print("\n================= <국내 시/도> 업데이트 중")
         new_domestic = scrape_domestic.run_domestic()
-        check, up_list = check_domestic(old_domestic, new_domestic)
-        if check:
+        do_check, up_list = check_domestic(old_domestic, new_domestic)
+        if do_check:
             for ul in up_list:
                 key = list(ul.keys())[0]
                 push.append([key, old_domestic[key].copy(), ul[key]])
                 old_domestic[key].update(ul[key])
+
+        if ko_check or do_check:
+            print("\n================= 데이터 업데이트 중")
+            old_domestic["대한민국"]["time"] = str(datetime.datetime.now())
             save_json(old_domestic, domestic_path)
-            push_file_msg("./_domestic.json")
-        print("================= 국내 지역별 업데이트 완료\n")
-        if push:
             push_update_msg(push)
+            push_file_msg("./_domestic.json")
+
+        print("\n##########################################################\n")
         time.sleep(sleep_interval)
 
 
