@@ -64,7 +64,7 @@ def run_main():
         print(datetime.datetime.now())
 
         push = []
-        print("================= 대한민국 업데이트중")
+        print("================= 국가별 업데이트중")
         old_world = load_json(world_path)
         old_korea = old_world["S. Korea"]
         new_korea = scrape_korea.run_korea()
@@ -73,9 +73,9 @@ def run_main():
             old_korea.update(new_korea)
             save_json(old_world, world_path)
             push_file_msg("./_world.json")
-        print("================= 대한민국 업데이트 완료\n")
+        print("================= 국가별 업데이트 완료\n")
 
-        print("================= 국내 업데이트중")
+        print("================= 국내 지역별 업데이트중")
         old_domestic = load_json(domestic_path)
         new_domestic = scrape_domestic.run_domestic()
         check, up_list = check_domestic(old_domestic, new_domestic)
@@ -86,7 +86,7 @@ def run_main():
                 old_domestic[key].update(ul[key])
             save_json(old_domestic, domestic_path)
             push_file_msg("./_domestic.json")
-        print("================= 국내 업데이트 완료\n")
+        print("================= 국내 지역별 업데이트 완료\n")
         if push:
             push_update_msg(push)
         time.sleep(sleep_interval)
