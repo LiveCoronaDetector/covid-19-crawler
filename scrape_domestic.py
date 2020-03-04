@@ -5,7 +5,8 @@
 import requests
 from bs4 import BeautifulSoup
 from utils import postprocess, load_json
-from scrape_helper import push_scraping_msg, check_update
+from scrape_helper import check_update
+from slack_handler import SlackHandler
 
 
 citydo = load_json("./_data.json")
@@ -49,7 +50,7 @@ def scrape_KCDC_citydo():
         new_data[name]["incidence"] = postproc[3]
         new_data[name]["time"] = time
         push.append((name, new_data[name]))
-    push_scraping_msg("scrape_domestic.py >> scrape_KCDC_citydo()", push)
+    SlackHandler().add_scraping_msg("scrape_domestic.py >> scrape_KCDC_citydo()", push)
     return new_data
 
 
@@ -69,7 +70,7 @@ def scrape_seoul():
     # seoul["dead"] =
     # seoul["incidence"] =
     seoul["time"] = time
-    push_scraping_msg("scrape_domestic.py >> scrape_seoul()", [("서울", seoul)])
+    SlackHandler().add_scraping_msg("scrape_domestic.py >> scrape_seoul()", [("서울", seoul)])
     return seoul
 
 

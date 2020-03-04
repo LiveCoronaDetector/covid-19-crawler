@@ -5,7 +5,7 @@
 import time
 import datetime
 from utils import load_json, save_json
-from scrape_helper import push_update_msg, push_file_msg
+from slack_handler import SlackHandler
 import scrape_korea
 import scrape_domestic
 
@@ -89,8 +89,11 @@ def run_main():
             print("\n================= 데이터 업데이트 중")
             old_domestic["대한민국"]["time"] = str(datetime.datetime.now())
             save_json(old_domestic, domestic_path)
-            push_update_msg(push)
-            push_file_msg("./_domestic.json")
+            SlackHandler().add_update_msg(push)
+            SlackHandler().push_file_msg("./_domestic.json")
+            
+        SlackHandler().push_scraping_message()
+        SlackHandler().push_update_message()
 
         print("\n##########################################################\n")
         time.sleep(sleep_interval)

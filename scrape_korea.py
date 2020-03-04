@@ -6,7 +6,7 @@ import time
 import requests
 from bs4 import BeautifulSoup
 from utils import postprocess, load_json, save_json
-from scrape_helper import push_scraping_msg
+from slack_handler import SlackHandler
 
 
 patients = load_json("./_data.json")
@@ -76,7 +76,7 @@ def scrape_worldOmeter(korea=True):
             korea_patients["recovered"] = recovered
             korea_patients["dead"] = dead
             push.append(("대한민국", korea_patients))
-            push_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
+            SlackHandler().add_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
             return korea_patients
 
         world_data[country] = patients.copy()
@@ -86,7 +86,7 @@ def scrape_worldOmeter(korea=True):
         push.append((country, world_data[country]))
         time.sleep(0.2)
 
-    push_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
+    SlackHandler().add_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
     save_json(world_data, "./_world.json")
     return world_data["S. Korea"]
 
@@ -109,7 +109,7 @@ def scrape_KCDC_korea():
     return_data["cc_sum"] = postproc[0]
     return_data["recovered"] = postproc[1]
     return_data["dead"] = postproc[2]
-    push_scraping_msg("scrape_korea.py >> scrape_KCDC_korea()",
+    SlackHandler().add_scraping_msg("scrape_korea.py >> scrape_KCDC_korea()",
                       [("대한민국", return_data)])
     return return_data
 
