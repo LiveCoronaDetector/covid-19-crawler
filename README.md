@@ -20,10 +20,13 @@
 | Path | Description
 | :--- | :----------
 | [CoronaCrawler](https://github.com/LiveCoronaDetector/CoronaCrawler) | Main folder
+|&boxvr;&nbsp; [kdkc](https://github.com/LiveCoronaDetector/CoronaCrawler/tree/master/kdkc) |
 |&boxvr;&nbsp; [main.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/main.py) | 크롤러 실행
 |&boxvr;&nbsp; [scrape_domestic.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_domestic.py) | KCDC와 각 시도에서 운영하는 사이트에서 **시도**별 발생 동향 수집
-|&boxvr;&nbsp; [scrape_korea.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_korea.py) | 질병관리본부, worldOmeter에서 **국내(or 세계)** 확진환자수, 격리해제수, 사망자수 수집
+|&boxvr;&nbsp; [scrape_korea.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_korea.py) | 질병관리본부, worldOmeter에서 **국내(or 세계)** 환자수 데이터 수집
 |&boxvr;&nbsp; [scrape_helper.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/scrape_helper.py) | 데이터 수집을 돕는 함수들
+|&boxvr;&nbsp; [slack_handler.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/slack_handler.py) | 
+|&boxvr;&nbsp; [singleton.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/singleton.py) | 
 |&boxvr;&nbsp; [utils.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/utils.py) | 자주 사용하는 공용 함수
 |&boxvr;&nbsp; [jejuRSScrawler.py](https://github.com/LiveCoronaDetector/CoronaCrawler/blob/master/jejuRSScrawler.py) | 제주특별자치도 보건서비스 현황 및 브리핑자료
 |&boxvr;&nbsp; _domestic.json | 국내 시도별 환자수 데이터
@@ -32,7 +35,7 @@
 |&boxvr;&nbsp; _data_desc.json | 수집해야 하는 데이터 한글명
 |&boxvr;&nbsp; slack_update_url.txt | slack bot-alarm 채널 url (업데이트 확인용)
 |&boxvr;&nbsp; slack_covidbot_url.txt | slack crawling-alarm 채널 url (수집 데이터 확인용)
-|&boxvr;&nbsp; slack_covidbot_token.txt | slack COVID-19-bot 파일 업로드를 위해 필요한 토큰
+|&boxvr;&nbsp; slack_covidbot_token.txt | slack COVID bot 파일 업로드를 위해 필요한 토큰
 
 <br>
 
