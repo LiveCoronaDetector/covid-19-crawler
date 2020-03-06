@@ -12,6 +12,7 @@ import scrape_domestic
 
 world_path = "./_world.json"
 domestic_path = "./_domestic.json"
+patients = load_json("./_data.json")
 
 
 def check_korea(old, new):
@@ -32,15 +33,12 @@ def check_korea(old, new):
     return True
 
 
-def check_domestic(old, new):
-    """대한민국 데이터가 변했는지 체크
-
-    데이터: 확진환자 증가, 확진환자 합계, 확진환자 중 격리중, 확진환자 중 격리해제, 확진환자 중 사망,
-          검사현황 합계, 검사현황 검사중, 검사현황 중 결과음성, 총계, 업데이트 시간
+def check_update(old, new):
+    """세계 및 국내 데이터가 변했는지 체크
 
     Args:
-        old: _domestic.json의 각 시도별 데이터
-        new: scraper_domestic.py의 main() 함수 반환값 (새로 수집한 데이터)
+        old: _domestic.json / _world.json 등 기존의 데이터
+        new: scrape 함수를 통해 얻은 새로 수집한 데이터
 
     Returns:
         새로 업데이트 해야하는 경우: True, 바뀐 데이터 list
@@ -48,6 +46,9 @@ def check_domestic(old, new):
     """
     update_list = []
     for key, value in new.items():
+        if key not in old.keys():
+            update_list.append({key: value})
+            continue
         if value == old[key]:
             continue
         update_list.append({key: value})
@@ -78,20 +79,44 @@ def run_main():
 
         print("\n================= <국내 시/도> 업데이트 중")
         new_domestic = scrape_domestic.run_domestic()
-        do_check, up_list = check_domestic(old_domestic, new_domestic)
+        do_check, up_list = check_update(old_domestic, new_domestic)
         if do_check:
             for ul in up_list:
                 key = list(ul.keys())[0]
                 push.append([key, old_domestic[key].copy(), ul[key]])
                 old_domestic[key].update(ul[key])
 
+        print("\n================= <세계> 업데이트 중")
+        old_world = load_json(world_path)
+        new_world = scrape_korea.scrape_worldOmeter(korea=False)
+        wo_check, up_list = check_update(old_world, new_world)
+        if wo_check:
+            for ul in up_list:
+                key = list(ul.keys())[0]
+                if key not in old_world.keys():
+                    new = patients.copy()
+                    push.append([key, new, ul[key]])
+                else:
+                    push.append([key, old_world[key].copy(), ul[key]])
+                print(ul[key])
+                old_world.update(ul)
+                print(old_world[key])
+                print("====")
+
         if ko_check or do_check:
-            print("\n================= 데이터 업데이트 중")
+            print("\n================= <대한민국 및 시/도> 데이터 업데이트 중")
             old_domestic["대한민국"]["time"] = str(datetime.datetime.now())
             save_json(old_domestic, domestic_path)
-            SlackHandler().add_update_msg(push)
             SlackHandler().push_file_msg("./_domestic.json")
-            
+
+        if wo_check:
+            print("\n================= <세계> 데이터 업데이트 중")
+            save_json(old_world, world_path)
+            SlackHandler().push_file_msg("./_world.json")
+
+        if ko_check or do_check or wo_check:
+            SlackHandler().add_update_msg(push)
+
         SlackHandler().push_scraping_message()
         SlackHandler().push_update_message()
 

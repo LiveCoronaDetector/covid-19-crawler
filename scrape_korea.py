@@ -5,7 +5,7 @@ import re
 import time
 import requests
 from bs4 import BeautifulSoup
-from utils import postprocess, load_json, save_json
+from utils import postprocess, load_json
 from slack_handler import SlackHandler
 
 
@@ -86,9 +86,9 @@ def scrape_worldOmeter(korea=True):
         push.append((country, world_data[country]))
         time.sleep(0.2)
 
-    SlackHandler().add_scraping_msg("scrape_korea.py >> scrape_worldOmeter()", push)
-    save_json(world_data, "./_world.json")
-    return world_data["S. Korea"]
+    SlackHandler().add_scraping_msg(
+        "scrape_korea.py >> scrape_worldOmeter(korea=False)", push)
+    return world_data
 
 
 def scrape_KCDC_korea():
