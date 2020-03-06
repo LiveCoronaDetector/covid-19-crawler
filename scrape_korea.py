@@ -59,6 +59,7 @@ def scrape_worldOmeter(korea=True):
     data = soup.select("#main_table_countries > tbody > tr")
 
     world_data = {}
+    world_cc, world_recovered, world_dead = 0, 0, 0
     push = []
     for datum in data:
         country = datum.find_all("td")[0].text.strip()
@@ -67,6 +68,9 @@ def scrape_worldOmeter(korea=True):
         dead = datum.find_all("td")[3].text.strip()
         postproc = postprocess([cc, recovered, dead])
         cc, recovered, dead = postproc[0], postproc[1], postproc[2]
+        world_cc += cc
+        world_recovered += recovered
+        world_dead += dead
 
         if korea:
             if country != "S. Korea":
@@ -85,6 +89,12 @@ def scrape_worldOmeter(korea=True):
         world_data[country]["dead"] = dead
         push.append((country, world_data[country]))
         time.sleep(0.2)
+
+    world_data["world"] = patients.copy()
+    world_data["world"]["cc_sum"] = world_cc
+    world_data["world"]["recovered"] = world_recovered
+    world_data["world"]["dead"] = world_dead
+    push.append(("world", world_data["world"]))
 
     SlackHandler().add_scraping_msg(
         "scrape_korea.py >> scrape_worldOmeter(korea=False)", push)
