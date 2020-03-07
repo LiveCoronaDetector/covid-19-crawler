@@ -63,7 +63,9 @@ def run_main():
 
     while True:
         print("\n##########################################################\n")
-        print(datetime.datetime.now(), end="\n")
+
+        now_time = datetime.datetime.now()
+        print(now_time, end="\n")
 
         push = []
         old_domestic = load_json(domestic_path)
@@ -86,22 +88,21 @@ def run_main():
                 push.append([key, old_domestic[key].copy(), ul[key]])
                 old_domestic[key].update(ul[key])
 
-        print("\n================= <세계> 업데이트 중")
-        old_world = load_json(world_path)
-        new_world = scrape_korea.scrape_worldOmeter(korea=False)
-        wo_check, up_list = check_update(old_world, new_world)
-        if wo_check:
-            for ul in up_list:
-                key = list(ul.keys())[0]
-                if key not in old_world.keys():
-                    new = patients.copy()
-                    push.append([key, new, ul[key]])
-                else:
-                    push.append([key, old_world[key].copy(), ul[key]])
-                print(ul[key])
-                old_world.update(ul)
-                print(old_world[key])
-                print("====")
+        wo_check = False
+        if now_time.hour in range(0, 24, 3) and now_time.minute in range(0, 15):
+            print("\n================= <세계> 업데이트 중")
+            old_world = load_json(world_path)
+            new_world = scrape_korea.scrape_worldOmeter(korea=False)
+            wo_check, up_list = check_update(old_world, new_world)
+            if wo_check:
+                for ul in up_list:
+                    key = list(ul.keys())[0]
+                    if key not in old_world.keys():
+                        new = patients.copy()
+                        push.append([key, new, ul[key]])
+                    else:
+                        push.append([key, old_world[key].copy(), ul[key]])
+                    old_world.update(ul)
 
         if ko_check or do_check:
             print("\n================= <대한민국 및 시/도> 데이터 업데이트 중")
