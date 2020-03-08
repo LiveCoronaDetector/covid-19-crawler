@@ -64,7 +64,7 @@ def scrape_worldOmeter(korea=True):
     for datum in data:
         country = datum.find_all("td")[0].text.strip()
         cc = datum.find_all("td")[1].text.strip()
-        recovered = datum.find_all("td")[6].text.strip()
+        recovered = datum.find_all("td")[5].text.strip()
         dead = datum.find_all("td")[3].text.strip()
         postproc = postprocess([cc, recovered, dead])
         cc, recovered, dead = postproc[0], postproc[1], postproc[2]
